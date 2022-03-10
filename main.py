@@ -69,23 +69,6 @@ class Player:
             self.fitness = 0
 
 
-def line_intersection(line1, line2):
-    xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
-    ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1])
-
-    def det(a, b):
-        return a[0] * b[1] - a[1] * b[0]
-
-    div = det(xdiff, ydiff)
-    if div == 0:
-        return
-
-    d = (det(*line1), det(*line2))
-    x = det(d, xdiff) / div
-    y = det(d, ydiff) / div
-    return x, y
-
-
 def eval_genomes(genomes, config):
     global gen
 
@@ -144,6 +127,8 @@ def eval_genomes(genomes, config):
                         goals[q].x = random.randint(0, 100)
                         goals[q].y = random.randint(0, 56)
                         player.fitness += 1000
+                        
+                player.fitness += 1 / e
 
                 o = nets[i].activate([math.atan2(player.y - terminator.y, player.x - terminator.x), math.atan2(player.y - g.y, player.x - g.x), 800 - player.x, 450 - player.y])
                 
@@ -156,9 +141,6 @@ def eval_genomes(genomes, config):
                 del players[i]
                 del ge[i]
                 del nets[i]
-
-        for struct in structs:
-            pygame.draw.line(window, (0, 0, 255), struct[0], struct[1])
 
         terminator.draw(window)
 
