@@ -50,8 +50,8 @@ class Terminator:
                 return player
 
         direction = math.atan2(c.y - self.y, c.x - self.x)
-        self.x += math.cos(direction) / 2.1
-        self.y += math.sin(direction) / 2.1
+        self.x += math.cos(direction) / 1.99
+        self.y += math.sin(direction) / 1.99
 
 
 class Player:
@@ -60,6 +60,8 @@ class Player:
 
         self.x = 100
         self.y = 100
+
+        self.doom = 0
 
         self.color = [random.randint(0, 255) for _ in range(3)]
 
@@ -75,9 +77,11 @@ class Player:
         self.x += math.cos(self.direction) / 2
         self.y += math.sin(self.direction) / 2
 
+        self.doom += 1
+
         w = pygame.Rect(0, 0, 800, 800)
 
-        if math.dist((self.x * 4, self.y * 4), w.center) > border_rad:
+        if math.dist((self.x * 4, self.y * 4), w.center) > border_rad or self.doom > 200:
             self.active = False
             self.fitness = 0
 
@@ -143,13 +147,12 @@ def eval_genomes(genomes, config):
                         d = e
                         g = goal
 
-                    if e <= 3:
+                    if e <= 6:
                         goals[q].reset()
                         player.fitness += 1000
+                        player.doom = 0
 
-                player.fitness += (1 / e) * 10
-
-                o = nets[i].activate([border_rad, math.dist((player.x * 4, player.y * 4), window.get_rect().center), math.atan2(player.y * 4 - g.y * 8, player.x * 4 - g.x * 8), math.atan2(player.y * 4 - terminator.y * 4, player.x * 4 - terminator.x * 4)])
+                o = nets[i].activate([player.direction, border_rad, math.dist((player.x * 4, player.y * 4), window.get_rect().center), math.atan2(player.y * 4 - g.y * 8, player.x * 4 - g.x * 8), math.atan2(player.y * 4 - terminator.y * 4, player.x * 4 - terminator.x * 4)])
                 
                 if o.index(max(o)) == 0:
                     player.direction += .2
