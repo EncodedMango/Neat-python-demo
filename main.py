@@ -81,7 +81,7 @@ class Player:
 
         w = pygame.Rect(0, 0, 800, 800)
 
-        if math.dist((self.x * 4, self.y * 4), w.center) > border_rad or self.doom > 200:
+        if math.dist((self.x * 4, self.y * 4), w.center) > border_rad or self.doom > 400:
             self.active = False
             self.fitness = 0
 
@@ -149,10 +149,10 @@ def eval_genomes(genomes, config):
 
                     if e <= 6:
                         goals[q].reset()
-                        player.fitness += 1000
+                        player.fitness += 1
                         player.doom = 0
 
-                o = nets[i].activate([player.direction, border_rad, math.dist((player.x * 4, player.y * 4), window.get_rect().center), math.atan2(player.y * 4 - g.y * 8, player.x * 4 - g.x * 8), math.atan2(player.y * 4 - terminator.y * 4, player.x * 4 - terminator.x * 4)])
+                o = nets[i].activate([player.direction, border_rad - math.dist((player.x * 4, player.y * 4), window.get_rect().center), math.atan2(player.y * 4 - g.y * 8, player.x * 4 - g.x * 8), math.atan2(player.y * 4 - terminator.y * 4, player.x * 4 - terminator.x * 4)])
                 
                 if o.index(max(o)) == 0:
                     player.direction += .2
